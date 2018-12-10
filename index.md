@@ -12,7 +12,7 @@
 <body>
 	<input type="text" name="screen" id="score_screen" readonly="true" value="" />
 
-	<button id="testbutton1" class="testbutton">Restart 1</button>
+	<button id="testbutton1" class="testbutton">Restdddddart 1</button>
 	<button id="testbutton2" class="testbutton">Pause 2</button>
 	<button id="testbutton3" class="testbutton">test 3</button>
 	<button id="testbutton4" class="testbutton">recycle food 4</button>
