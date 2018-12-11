@@ -533,14 +533,14 @@ function turn_direction(player){
 
 
 restart()
+alert("press space to start/pause")
+// document.getElementById('testbutton1').onclick = restart
+// document.getElementById('testbutton2').onclick = check_value
+// document.getElementById('testbutton3').onclick = creat_food
 
-document.getElementById('testbutton1').onclick = restart
-document.getElementById('testbutton2').onclick = check_value
-document.getElementById('testbutton3').onclick = creat_food
-
-document.getElementById('testbutton4').onclick = recycle_food
-document.getElementById('testbutton5').onclick = faster
-document.getElementById('testbutton6').onclick = slower
+// document.getElementById('testbutton4').onclick = recycle_food
+// document.getElementById('testbutton5').onclick = faster
+// document.getElementById('testbutton6').onclick = slower
 
 // document.getElementById('testbutton7').onclick = "dead_gray(0)"
 // document.getElementById('testbutton8').onclick = 
