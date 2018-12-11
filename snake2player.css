@@ -1,0 +1,82 @@
+body {background-color: rgb(0, 255, 255);}
+
+h1 {color:black; font-size:18px;  }
+
+p {color:purple;margin-left:20px;  }
+
+button {color:black; font-size:20px; margin:2px;  background-color: gray}
+
+form {width: 25%; height: 100%;background-color: gray;}
+
+
+
+#playground {
+	background-color: white;
+	width: 1000px;
+	height: 500px;
+	position: fixed;
+	font-size: 40px;
+	top: 10px;
+	left: 400px;
+	border-style: solid;
+
+}
+#snake_head_0 {
+	background-image: url("snake_head_1_1.png");
+	transform: rotate(90deg);
+}
+
+#snake_head_1 {
+	background-image: url("snake_head_2_1.png");
+	transform: rotate(270deg);
+}
+
+.snake_head {
+	color: red;
+	width:25px;
+	height:25px;
+	position: absolute;
+	font-size:10px;
+	background-size: contain;
+}
+.food {
+	color: black;
+	font-size:10px;
+	background-color: green;
+	width: 25px;
+	height: 25px;
+	position: absolute; 
+}
+
+.snake_body_1 {
+	color: black;
+	background-color: blue; 
+
+	border-style: solid;
+	width:25px;
+	height:25px;
+	position: absolute;
+	font-size:10px;
+	top: 300px;
+	left: 300px;
+	background-size: contain;
+	border-width:1px;
+
+}
+
+.snake_body_0 {
+	color: black;
+	background-color: red; 
+
+	border-style: solid;
+	width:25px;
+	height:25px;
+	position: absolute;
+	font-size:10px;
+	top: 300px;
+	left: 300px;
+	background-size: contain;
+	border-width:1px;
+	/*filter: grayscale(0%)blur(0px);*/
+
+}
