@@ -9,6 +9,16 @@ button {color:black; font-size:20px; margin:2px;  background-color: gray}
 form {width: 25%; height: 100%;background-color: gray;}
 
 
+#border {
+	background-image: url("border.png");	
+	width: 1050px;
+	height: 550px;
+	position: fixed;
+	font-size: 40px;
+	top: 5px;
+	left: 375px;
+}
+
 
 #playground {
 	background-color: white;
@@ -16,11 +26,11 @@ form {width: 25%; height: 100%;background-color: gray;}
 	height: 500px;
 	position: fixed;
 	font-size: 40px;
-	top: 10px;
+	top: 30px;
 	left: 400px;
-	border-style: solid;
 
 }
+
 #snake_head_0 {
 	background-image: url("snake_head_1_1.png");
 	transform: rotate(90deg);
@@ -79,4 +89,33 @@ form {width: 25%; height: 100%;background-color: gray;}
 	border-width:1px;
 	/*filter: grayscale(0%)blur(0px);*/
 
+}
+/*以下是boom新增的*/
+.body_with_boom {
+	background-image: url("boom.png");	
+}
+
+.boom {
+	background-image: url("boom.png");	
+	color: black;
+	font-size:10px;
+	background-color: brown;
+	width: 25px;
+	height: 25px;
+	position: absolute; 
+}
+
+.body_going_explore{
+		color: black;
+	background-color: purple; 
+
+	border-style: solid;
+	width:25px;
+	height:25px;
+	position: absolute;
+	font-size:10px;
+	top: 300px;
+	left: 300px;
+	background-size: contain;
+	border-width:1px;
 }

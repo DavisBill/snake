@@ -29,6 +29,8 @@ var player_num;
 var grade_lock;
 var border_lock;
 var pre_move = [[],[]];
+var pre_t = [];
+
 
 
 var settings = document.setting
@@ -47,6 +49,14 @@ function get_rule(name){
 	} 
 }
 
+function creat_border(){
+	var pg = document.getElementById("body")
+	var id_name = "border"
+	var para=document.createElement("DIV")	
+	pg.append(para)
+	para.setAttribute("id", id_name)
+}
+
 function creat_body(player){
 	var pg = document.getElementById("playground")
 	var id_name = "snake" + player + "_body" + snake_body_id_num[player]
@@ -55,7 +65,7 @@ function creat_body(player){
 	para.setAttribute("id", id_name)
 	para.setAttribute("class", "snake_body_"+player);
 	para.setAttribute("style", "left: "+x[player]+"px; top: "+y[player]+"px; transform:"+ snake_head[player].style.transform +";") 
-	snake_body_array[player][snake_body_id_num[player]] = document.getElementById(id_name)
+	snake_body_array[player].push(para)//原本：snake_body_array[player][snake_body_id_num[player]] = document.getElementById(id_name)
 	snake_body_id_num[player] = snake_body_id_num[player] + 1
 	score(player)
 }
@@ -122,6 +132,7 @@ function head_move(player){
 		snake_body_follow(player)
 		without_border(player)
 		eat_food(player)
+		boom_explore(player) //#boom! 增加判斷是否有需要爆炸的boom。因為牽涉到身體的長度（arrary.length），所以必須要在這個時間點更改
 	}
 }
 
@@ -140,6 +151,7 @@ function bump_into_myself(player){
 	for(i = 0; i < snake_body_array[player].length; i++){
 		if(head_x_going == snake_body_array[player][i].style.left && head_y_going == snake_body_array[player][i].style.top){
 			end(player)
+
 			return true
 		}
 	}
@@ -218,6 +230,7 @@ function keboard_control(event){
 			pause()
 			break;
 		case 48://0
+			trick_0(0)
 			break;
 		case 49://1
 			restart()
@@ -226,7 +239,7 @@ function keboard_control(event){
 			check_value()
 			break;
 		case 51://3
-			creat_food()
+			creat_food('food')
 			break;
 		case 52://4
 			recycle_food()
@@ -235,15 +248,16 @@ function keboard_control(event){
 			faster(0)
 			break;
 		case 54://6
-			slower()
+			slower(0)
 			break;
 		case 55://7
 			dead_gray(0)
 			break;
 		case 56://8
-			creat_player2_snake_head()
+			trick_speedup(0)
 			break;
 		case 57://9
+			trick_9(0)
 			break;
 	}
 
@@ -256,23 +270,23 @@ function keboard_control(event){
 	}
 }
 
-
-function creat_food(){
+//#boom!擴充一個parameter(kind_food)，讓東西生成可以選擇"food" or "boom"
+function creat_food(kind_food){
 
 	var lx = Math.floor((playground_w/snake_unit)*Math.random())*snake_unit
 	var ly = Math.floor((playground_h/snake_unit)*Math.random())*snake_unit
 	var pg = document.getElementById("playground")
-	var id_name = "food" + food_id_num
+	var id_name = kind_food + food_id_num
 	var para=document.createElement("DIV")
 	pg.append(para);
 	para.setAttribute("id", id_name)
-	para.setAttribute("class", "food");
+	para.setAttribute("class", kind_food);
 	para.setAttribute("style", "left: "+lx+"px; top: "+ly+"px;")
 	food_array[food_array.length] = document.getElementById(id_name)
 	food_id_num = food_id_num + 1
 }
 
-
+//#boom!讓吃到東西的時候判斷，是吃到炸彈還是食物
 function eat_food(player){
 	for(i = 0; i < food_array.length; i++){
 		if(snake_head[player].style.left == food_array[i].style.left && snake_head[player].style.top == food_array[i].style.top){
@@ -281,13 +295,23 @@ function eat_food(player){
 			var pg = document.getElementById("playground")
 			pg.removeChild(food)
 			food_array.splice(i,1)
-			creat_body(player)
-			creat_food()
+			switch(food.getAttribute("class")){
+			case 'food':
+				creat_body(player)
+				creat_food('food')
+				break;
+			case 'boom':
+				creat_body_with_boom(player)
+				creat_food('boom')
+				
+				break;
+
 			if(grade_lock == "true"){
 				grade(player)
 			}
-		}
+			}
 	} 
+	}
 }
 function end(player){
 	clearInterval(move[player])
@@ -318,7 +342,6 @@ function restart(){
 	food_array =[]
 	pause_b = true
 	pre_move = [[],[]]
-
 	grade_lock = setting("n_grade")
 	border_lock = setting("n_border")	
 	t = [setting("n_speed"),setting("n_speed")]
@@ -330,7 +353,7 @@ function restart(){
 		size(i)
 	}
 	for (var i = 0; i < setting("n_food"); i++) {
-		creat_food()
+		creat_food('food')
 	}
 }
 function remove_snake_body(player){
@@ -354,20 +377,23 @@ function recycle_food(){
 	pg.removeChild(food)
 	food_array.splice(food_array.length-1,1)
 }	
+
+function speed_set(player){
+	clearInterval(move[player])
+	move[player] = setInterval("head_move("+player+")", t[player])
+	var screen = document.getElementById("speed_screen")
+	screen.value = t[player]
+}
+
 function faster(player){
 	t[player] = parseInt(t[player]*0.95)
-	clearInterval(move[player])
-	move[player] = setInterval("head_move("+player+")", t[player])
-	var screen = document.getElementById("speed_screen")
-	screen.value = t[player]
+	speed_set(player)
 }
 function slower(player){
-	t[player] = parseInt(t[player]*1/0.9)
-	clearInterval(move[player])
-	move[player] = setInterval("head_move("+player+")", t[player])
-	var screen = document.getElementById("speed_screen")
-	screen.value = t[player]
+	t[player] = parseInt(t[player]*1/0.95)
+	speed_set(player)
 }
+
 function score(player){
 	var screen = document.getElementById("score_screen")
 	screen.value = snake_body_id_num[player]
@@ -531,18 +557,113 @@ function turn_direction(player){
 	}
 }
 
+function produce_new_position(){
+	var now_position = direction[player]
 
-restart()
-alert("press space to start/pause")
-// document.getElementById('testbutton1').onclick = restart
+}
+
+function trick_clockwise(player){
+	if(pre_move[player].length == 0 ){
+		pre_move[player].push(direction[player])		
+	}
+	switch(pre_move[player][pre_move[player].length-1]){
+		case 37:
+			pre_move[player].push(38)
+			break;
+		case 38:
+			pre_move[player].push(39)
+			break;
+		case 39:
+			pre_move[player].push(40)
+			break;
+		case 40:
+			pre_move[player].push(37)
+			break;
+	}
+}
+function trick_anticlockwise(player){
+	if(pre_move[player].length == 0 ){
+		pre_move[player].push(direction[player])		
+	}
+	switch(pre_move[player][pre_move[player].length-1]){
+		case 37:
+			pre_move[player].push(40)
+			break;
+		case 38:
+			pre_move[player].push(37)
+			break;
+		case 39:
+			pre_move[player].push(38)
+			break;
+		case 40:
+			pre_move[player].push(39)
+			break;
+	}
+}
+function trick_0(player){
+	trick_clockwise(0)
+	trick_clockwise(0)
+}
+
+function trick_9(player){
+	trick_anticlockwise(0)
+	trick_anticlockwise(0)
+}
+
+function trick_speedup(player){
+	pre_t[player] = t[player]
+	t[player] = parseInt(t[player]*0.2)
+	speed_set(player)
+	setTimeout('t['+player+'] = pre_t['+player+'];speed_set('+player+');', 300);
+}
+
+function trick_fade(player){
+
+}
+
+
+//#boom!這樣子判斷會變得太複雜，應該效仿 class
+function creat_body_with_boom(player){
+
+	var pg = document.getElementById("playground")
+	var id_name = "snake" + player + "_body" + snake_body_id_num[player]
+	var para=document.createElement("DIV");
+	pg.append(para);
+	para.setAttribute("id", id_name)
+	para.setAttribute("class", "snake_body_"+player);
+	para.classList.add("body_with_boom") //只有boom才有！
+	para.setAttribute("style", "left: "+x[player]+"px; top: "+y[player]+"px; transform:"+ snake_head[player].style.transform +";") 
+	snake_body_array[player].push(para)//原本：snake_body_array[player][snake_body_id_num[player]] = document.getElementById(id_name)
+	boom_clock(player, para)//只有boom才有！
+	snake_body_id_num[player] = snake_body_id_num[player] + 1
+	score(player)
+}
+//#boom!
+function boom_clock(player, obj_body_with_boom){//the boom is going to explore
+	setTimeout(function(){
+		// obj_body_with_boom.classList.add("body_going_explore") // 標註起來
+		obj_body_with_boom.setAttribute("class", "body_going_explore");
+	}, 3000);
+}
+//#boom!
+function boom_explore(player){//讓被標注的爆吧！
+	for(var i = 0; i < snake_body_array[player].length; i++){
+		if(snake_body_array[player][i].getAttribute("class") == "body_going_explore"){
+			snake_body_array[player].splice(i, 1);
+		}
+	}
+}
+
+restart();
+//creat_border()
+alert("press space to start/pause");
+document.getElementById('testbutton1').onclick = restart
 // document.getElementById('testbutton2').onclick = check_value
-// document.getElementById('testbutton3').onclick = creat_food
+document.getElementById('testbutton3').onclick = function(){creat_food('boom')}//#boom!
+
 
 // document.getElementById('testbutton4').onclick = recycle_food
-// document.getElementById('testbutton5').onclick = faster
-// document.getElementById('testbutton6').onclick = slower
+//document.getElementById('testbutton5').onclick = 
+//document.getElementById('testbutton6').onclick = slower
 
 // document.getElementById('testbutton7').onclick = "dead_gray(0)"
-// document.getElementById('testbutton8').onclick = 
-
-// document.getElementById('testbutton9').onclick = player2_pause
