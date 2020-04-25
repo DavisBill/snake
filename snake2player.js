@@ -656,6 +656,8 @@ function boom_explore(player){//讓被標注的爆吧！
 
 restart();
 //creat_border()
+//create boom
+creat_food('boom');
 alert("press space to start/pause");
 document.getElementById('testbutton1').onclick = restart
 // document.getElementById('testbutton2').onclick = check_value
